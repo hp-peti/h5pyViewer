@@ -45,7 +45,7 @@ def test3(hid):
     for idxAttr in range(numAttr):
       aid=h5py.h5a.open(hid,index=idxAttr)
       val=GetAttrVal(aid)
-      print(aid.name,val)
+      print((aid.name,val))
       if aid.name=='ofsTime':
         plt.plot(val)
         plt.show()

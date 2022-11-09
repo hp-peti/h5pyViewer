@@ -54,7 +54,7 @@ def MplAddAllColormaps(colMapNameLst=None):
   try:
     import matplotlib.cm as cm
   except ImportError as e:
-    print('ImportError: '+e.message)
+    print('ImportError: '+str(e))
   if not colMapNameLst:
     colMapNameLst=[m for m in cm.datad if not m.endswith("_r")]
   for m in colMapNameLst:
@@ -363,7 +363,7 @@ class DlgColBarSetup(wx.Dialog):
           MplAddColormap(k,lut)
           v=glumpy.colormap.__dict__[k]
         except ImportError as e:
-          print(e.message)
+          print(str(e))
           print("don't have colormap "+k)
           continue
       if isinstance(v,glumpy.colormap.Colormap):

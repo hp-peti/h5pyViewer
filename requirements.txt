@@ -1,4 +1,5 @@
-#!conda create -n h5pyViewer --file
+#!/usr/bin/env conda create -n h5pyViewer --file
 python<3.11
 h5py
+matplotlib
 wxpython

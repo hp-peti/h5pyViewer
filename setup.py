@@ -94,7 +94,7 @@ class MyINSTALL_LIB (distutils.command.install_lib.install_lib):
     instDir=os.path.join(self.install_dir,'h5pyViewer')
     binDir=self.distribution.command_obj['install'].install_scripts
     print ('instDir',instDir,'binDir',binDir)
-    if platform.system()=='Linux':
+    if platform.system() in ('Linux', 'Darwin'):
       mod=0o755
       for fn in('h5pyViewer','hdfAttrib','hdfGrid','hdfImageGL','hdfImage','hdfTree'):
         fnInst=os.path.join(instDir,fn+'.py')
@@ -122,7 +122,7 @@ def runSetup(**kv):
         'url'         :'www.psi.ch',
         'license'     :'BSD',
         'long_description':open('README.rst', 'r').read(),
-        'platforms'   : ['Linux','Windows'],
+        'platforms'   : ['Linux','Windows','Darwin'],
         #'py_modules'  :['libDetXR', 'cbfParser'],
         'packages'    :['h5pyViewer'],
         #'package_dir' :{'h5pyViewer':'.'},

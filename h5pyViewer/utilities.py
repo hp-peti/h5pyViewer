@@ -29,7 +29,7 @@ class StopWatch():
   @classmethod
   def Log(cls,str=None,restart=True):
     ts=time.time()
-    print('%.6f'%(ts-cls.ts),str)
+    print(('%.6f'%(ts-cls.ts),str))
     if restart:
       cls.ts=ts
 
@@ -96,12 +96,13 @@ def AddToolbar(parent,sizer):
     # Mac platform (OSX 10.3, MacPython) does not seem to cope with
     # having a toolbar in a sizer. This work-around gets the buttons
     # back, but at the expense of having the toolbar at the top
-    parent.SetToolBar(toolbar)
+    # parent.SetToolBar(toolbar)
+    pass
   else:
     # On Windows platform, default window size is incorrect, so set
     # toolbar width to figure width.
-    tw, th = toolbar.GetSizeTuple()
-    fw, fh = parent.GetSizeTuple()
+    tw, th = toolbar.GetSize()
+    fw, fh = parent.GetSize()
     # By adding toolbar in sizer, we are able to put it at the bottom
     # of the frame - so appearance is closer to GTK version.
     # As noted above, doesn't work for Mac.

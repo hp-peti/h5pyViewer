@@ -28,7 +28,7 @@ import pylab as plt #used for the colormaps
 try:
   from libDetXR.procMoment import ProcMoment
 except ImportError as e:
-  print('ImportError: '+e.message)
+  print('ImportError: '+str(e))
 
 
 #from scipy import ndimage as ndi
@@ -226,7 +226,7 @@ class MPLCanvasImg(FigureCanvas):
   def OnMouse(self, event):
     for k in dir(event):
       if k[0]!='_':
-        print(k,getattr(event,k))
+        print((k,getattr(event,k)))
 
 class DlgColBarSetupOld(wx.Dialog):
   def __init__(self,parent):
@@ -476,7 +476,7 @@ class HdfImageFrame(wx.Frame):
       dlg = wx.FileDialog(self, "Choose valid mask file (e.g. pilatus_valid_mask.mat)", os.getcwd(), '','MATLAB files (*.mat)|*.mat|all (*.*)|*.*', wx.FD_OPEN|wx.FD_CHANGE_DIR)
       if dlg.ShowModal() == wx.ID_OK:
         fnMatMsk = dlg.GetPath()
-        print('OnOpen',fnMatMsk)
+        print(('OnOpen',fnMatMsk))
       dlg.Destroy()
       if not fnMatMsk:
         return
@@ -552,7 +552,7 @@ class HdfImageFrame(wx.Frame):
     ang=0.5*np.arctan2(2*u11,(u20-u02))/(2*np.pi)*360. #orientation value 0..1
     exc=np.sqrt(1-l1/l0) #eccentricity :circle=0: http://en.wikipedia.org/wiki/Eccentricity_%28mathematics%29
 
-    print('xb:%g yb:%g cov:%g %g %g %g  ang:%g exc:%g'%((xm, ym)+tuple(cov.ravel())+(ang,exc)))
+    print(('xb:%g yb:%g cov:%g %g %g %g  ang:%g exc:%g'%((xm, ym)+tuple(cov.ravel())+(ang,exc))))
     #fig, ax = plt.subplots()
     #ax.imshow(data,vmax=100,interpolation='nearest')
     #plt.show()
