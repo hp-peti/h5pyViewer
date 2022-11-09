@@ -1,0 +1,4 @@
+#!conda create -n h5pyViewer --file
+python<3.11
+h5py
+wxpython

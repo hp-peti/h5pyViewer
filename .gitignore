@@ -6,3 +6,8 @@ build/
 .project
 .pydevproject
 
+*.egg-info/
+
+.vscode/
+
+*.py.bak

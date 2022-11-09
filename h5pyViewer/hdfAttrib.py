@@ -12,7 +12,7 @@ implements an attribute view of a hdf5 dataset.
 import os
 import wx,h5py
 import numpy as np
-from hdfGrid import *
+from .hdfGrid import *
 
 def GetAttrVal(aid):
   rtdt = h5py._hl.dataset.readtime_dtype(aid.dtype, [])
@@ -74,7 +74,7 @@ class HdfAttrListCtrl(wx.ListCtrl):
     aid=h5py.h5a.open(hid,index=event.Data)
     val=GetAttrVal(aid)
     if type(val)!=np.ndarray:
-      print val
+      print(val)
       return
     frame=HdfGridFrame(self,aid.name,val)
     frame.Show(True)
@@ -90,7 +90,7 @@ class HdfAttribFrame(wx.Frame):
     self.Centre()
 
 if __name__ == '__main__':
-  import utilities as ut
+  from . import utilities as ut
   import os,sys,argparse #since python 2.7
   def GetParser(required=True):
     fnHDF='/scratch/detectorData/e14472/scan_00030-00033.hdf5'
