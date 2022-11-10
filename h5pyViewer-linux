@@ -1,0 +1,3 @@
+#!/usr/bin/env python
+import h5pyViewer.h5pyViewer
+h5pyViewer.h5pyViewer.main()

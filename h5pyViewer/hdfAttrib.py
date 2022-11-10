@@ -15,7 +15,11 @@ import numpy as np
 from .hdfGrid import *
 
 def GetAttrVal(aid):
-  rtdt = h5py._hl.dataset.readtime_dtype(aid.dtype, [])
+  rtdt = (
+    h5py._hl.dataset.readtime_dtype(aid.dtype, [])
+  ) if aid.dtype.names is not None else (
+    aid.dtype
+  )
   arr = np.ndarray(aid.shape, dtype=rtdt, order='C')
   aid.read(arr)
   if len(arr.shape) == 0:
@@ -42,14 +46,15 @@ class HdfAttrListCtrl(wx.ListCtrl):
 
     for idxAttr in range(numAttr):
       aid=h5py.h5a.open(hid,index=idxAttr)
-      if aid.name.startswith('_u_'):
+      if aid.name.startswith(b'_u_'):
         continue
-      idxItem=self.InsertStringItem(idxAttr, aid.name)
+      aid_name = aid.name.decode()
+      idxItem=self.InsertStringItem(idxAttr, aid_name)
       val=GetAttrVal(aid)
       self.SetStringItem(idxItem, 1, str(val))
       #print idxAttr,idxItem,aid,aid.name,val
       try:
-        aidUnit=h5py.h5a.open(hid,'_u_'+aid.name)
+        aidUnit=h5py.h5a.open(hid,b'_u_'+aid.name)
       except KeyError as e:
         pass
       else:

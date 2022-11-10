@@ -18,7 +18,7 @@ class DlgFormatSetup(wx.Dialog):
   def __init__(self,parent,fmt):
     wx.Dialog.__init__(self,parent,-1,'Format Setup')
     txtFmt=wx.StaticText(self,-1,'format')
-    self.edFmt=edFmt=wx.TextCtrl(self,-1,fmt,style=wx.TE_PROCESS_ENTER)
+    self.edFmt=edFmt=wx.TextCtrl(self,-1,fmt or '',style=wx.TE_PROCESS_ENTER)
 
     txtPredef=wx.StaticText(self,-1,'predefined')
     preDefLst=('default','0x%x','%f+%fi')
@@ -51,15 +51,15 @@ class DlgFormatSetup(wx.Dialog):
       self.edFmt.Value=''
 
 #http://wxpython-users.1045709.n5.nabble.com/filling-a-wxgrid-td2348720.html
-class Table1DArray(wx.grid.PyGridTableBase):
+class Table1DArray(wx.grid.GridTableBase):
   def __init__(self, data):
-    wx.grid.PyGridTableBase.__init__(self)
+    super().__init__()
     #ut.StopWatch.Log('DBG 1')
     self.data = data
     #ut.StopWatch.Log('DBG 2')
 
   def GetRowLabelValue(self,idx):
-    return idx
+    return str(idx)
 
   def GetColLabelValue(self,idx):
     return ''
@@ -76,16 +76,19 @@ class Table1DArray(wx.grid.PyGridTableBase):
     #ut.StopWatch.Log('GetValue %d %d'%(row,col))
     return self.data[row]
 
-class Table2DArray(wx.grid.PyGridTableBase):
+  def SetValue(self, row, col, value):
+    pass
+
+class Table2DArray(wx.grid.GridTableBase):
   def __init__(self, data):
-    wx.grid.PyGridTableBase.__init__(self)
+    super().__init__()
     self.data = data
 
   def GetRowLabelValue(self,idx):
-    return idx
+    return str(idx)
 
   def GetColLabelValue(self,idx):
-    return idx
+    return str(idx)
 
   def GetNumberRows(self):
     return self.view.shape[0]
@@ -99,13 +102,16 @@ class Table2DArray(wx.grid.PyGridTableBase):
     except AttributeError:
       return self.view[row][col]
 
-class Table1DCompound(wx.grid.PyGridTableBase):
+  def SetValue(self, row, col, value):
+    pass
+
+class Table1DCompound(wx.grid.GridTableBase):
   def __init__(self, data):
-    wx.grid.PyGridTableBase.__init__(self)
+    super().__init__()
     self.data = data
 
   def GetRowLabelValue(self,idx):
-    return idx
+    return str(idx)
 
   def GetColLabelValue(self,idx):
     return self.data.dtype.names[idx]
@@ -117,21 +123,25 @@ class Table1DCompound(wx.grid.PyGridTableBase):
     return len(self.data.dtype.names)
 
   def GetValue(self, row, col):
-    try:
-      return self.cellFormat%self.data[row][col]
-    except AttributeError:
-      return self.data[row][col]
+      fmt = getattr(self, "cellFormat", None);
+      if fmt is None:
+        return self.data[row][col]
+      else:
+        fmt % self.data[row][col]
+
+  def SetValue(self, row, col, value):
+    pass
   
-class Table2DCompound(wx.grid.PyGridTableBase):
+class Table2DCompound(wx.grid.GridTableBase):
   def __init__(self, data):
-    wx.grid.PyGridTableBase.__init__(self)
+    super.__init__()
     self.data = data
 
   def GetRowLabelValue(self,idx):
-    return idx
+    return str(idx)
 
   def GetColLabelValue(self,idx):
-    return idx
+    return str(idx)
 
   def GetNumberRows(self):
     return self.view.shape[0]
@@ -140,10 +150,12 @@ class Table2DCompound(wx.grid.PyGridTableBase):
     return self.view.shape[1]
 
   def GetValue(self, row, col):
-    try:
-      return self.cellFormat%self.view[row][col]
-    except AttributeError:
-      return self.view[row][col]
+      fmt = getattr(self, "cellFormat", None);
+      if fmt is None:
+        return self.view[row][col]
+      else:
+        fmt % self.view[row][col]
+
 
 class Grid(wx.grid.Grid):
   def __init__(self, parent, data):
@@ -161,6 +173,8 @@ class Grid(wx.grid.Grid):
     self.SetDefaultCellAlignment(wx.ALIGN_RIGHT,wx.ALIGN_CENTRE)
     #self.SetDefaultCellAlignment(wx.ALIGN_CENTRE,wx.ALIGN_CENTRE)
     #self.SetDefaultRenderer
+    #self.AutoSizeColumns()
+    #self.AutoSizeRows()
 
   @staticmethod
   def OnSetView(usrData,value,msg):
@@ -232,9 +246,8 @@ class HdfGridFrame(wx.Frame):
 
     grid.SetTable (tbl, True)
     #AutoSize must be called after SetTable, but takes lot of time on big tables!
-    if tbl.GetNumberCols()*tbl.GetNumberRows()<50*50:
-      grid.AutoSizeColumns(True);grid.AutoSizeRows(True)
-    #grid.SetDefaultColSize(200, True)       
+    grid.AutoSizeColumns(True)
+    grid.AutoSizeRows(True)
     self.grid=grid
 
     pan.SetSizer(sizer)
@@ -242,6 +255,7 @@ class HdfGridFrame(wx.Frame):
     self.Centre()
     self.BuildMenu()
     grid.Bind(wx.grid.EVT_GRID_CMD_COL_SIZE, self.OnColSize)
+
 
 
   def OnColSize(self,event):
@@ -255,14 +269,14 @@ class HdfGridFrame(wx.Frame):
   def OnSetFormat(self,event):
     print('OnSetFormat')
     
-    fmt=getattr(self.grid.Table,'cellFormat','')
+    fmt=getattr(self.grid.Table,'cellFormat',None)
     dlg=DlgFormatSetup(self,fmt)
     if dlg.ShowModal()==wx.ID_OK:
       tbl=self.grid.Table; v=dlg.edFmt.Value
       if v:
         tbl.cellFormat=v
       else:
-        del tbl.cellFormat
+        tbl.cellFormat=None
       self.grid.ForceRefresh()    
     dlg.Destroy()    
     

@@ -355,7 +355,7 @@ class HdfViewerFrame(wx.Frame):
         txt+='Attributes:%d\n'%numAttr
         for idxAttr in range(numAttr):
           aid=h5py.h5a.open(hid,index=idxAttr)
-          txt+='\t'+aid.name+'\t'+str(GetAttrVal(aid))+'\n'
+          txt+='\t'+aid.name.decode()+'\t'+str(GetAttrVal(aid))+'\n'
     val=None
     if t==h5py.h5g.GroupID:
       pass
@@ -390,7 +390,7 @@ class HdfViewerFrame(wx.Frame):
         except ValueError as e: pass
         else:txt+=tx+':'+str(v)+'\n'
 
-      if hid.shape==() or np.prod(hid.shape)<10: #show up to max. 10 element arrays
+      if hid.shape==() or np.prod(hid.shape)<20: #show up to max. n element arrays
       #if  ttt==h5py.h5t.TypeStringID or hid.shape==() or hid.shape==(1,):
         ds=h5py.Dataset(hid)
         txt+='Value:\n\t'+str(ds[()])+'\n'
