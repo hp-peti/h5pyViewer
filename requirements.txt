@@ -1,5 +1,5 @@
-#!/usr/bin/env conda create -n h5pyViewer --file
-python<3.11
+#!/usr/bin/env conda create -n h5pyViewer -c conda-forge --file
+python>=3.10,<3.11
 h5py
 matplotlib
 wxpython
